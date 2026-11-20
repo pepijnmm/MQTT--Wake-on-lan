@@ -15,13 +15,13 @@ class WakeOnLan:
 		self.__d_port = 9
 		self.sep = '' # MAC address separator
 		self.network_if = self.Adapter()
-	
+
 	@property
 	def last_mac_address_separator(self, mac=None):
 		if not mac is None:
 			self.is_mac_address(mac)
 		return self.sep
-	
+
 	def is_mac_address(self, mac, update_sep = True):
 		pattern = r"([0-9A-Fa-f]{2}[-:\s]){5}[0-9A-Fa-f]{2}"
 		result = re.match(pattern, mac)
@@ -32,7 +32,7 @@ class WakeOnLan:
 		result = re.findall(pattern, mac)
 		if not len(set(result)) == 1:
 			return False
-		
+
 		if update_sep:
 			self.sep = result[0]
 		return True
@@ -41,18 +41,18 @@ class WakeOnLan:
 		if not self.is_mac_address(mac):
 			print("Invalid MAC address")
 			exit()
-		
+
 		mac = mac.replace(self.sep, "")
 		packet = 'FF' * 6 + mac * 16
 		packet = binascii.unhexlify(packet)
 		return packet
-	
+
 	def send_magic_packet(self, mac, ip = None, port = None):
 		if ip is None:
 			ip = self.__d_ip_address
 		if port is None:
 			port = self.__d_port
-		
+
 		if self.network_if.name is None:
 			self.select_network_interface()
 
@@ -61,7 +61,7 @@ class WakeOnLan:
 			s.bind((self.network_if.ip, 0))
 			s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 			s.sendto(packet, (ip, port))
-		
+
 	def select_network_interface(self):
 		interfaces = psutil.net_if_addrs()
 		print("Select network adapter")
@@ -70,7 +70,7 @@ class WakeOnLan:
 			print("{0}: {1}".format(i, key))
 		print("----------")
 		print("Please select adapter number: ", end="")
-		num = input()
+		num = 1; # I want the software to auto start. so I selected the netwerk adapter myself, todo move to config file
 		try:
 			num = int(num)
 			if num < 0 or len(interfaces.keys()) < num:
@@ -88,16 +88,15 @@ class WakeOnLan:
 			else:
 				# AF_INET6
 				pass
-		
+
 		print("----------")
 		print("Adapter Name: {0}".format(self.network_if.name))
 		print("Adapter IP  : {0}".format(self.network_if.ip))
 		print("Adapter MAC : {0}".format(self.network_if.mac))
 		print("----------")
 
-		
+
 if __name__ == "__main__":
 	wol = WakeOnLan()
 	wol.send_magic_packet("aa:aa:aa:aa:aa:aa")
 
-	

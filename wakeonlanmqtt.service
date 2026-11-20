@@ -1,0 +1,14 @@
+[Unit]
+Description=wakeonlanmqtt
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 main.py
+WorkingDirectory=/home/{fill in username here/correct folder location}/wakeonlanmqtt
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User={fill in username here}
+
+[Install]
+WantedBy=multi-user.target

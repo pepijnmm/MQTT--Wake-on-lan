@@ -3,13 +3,16 @@
 ![CUI](https://github.com/takkaO/MQTT-WOL_Project/blob/images/cui.png)
 
 ## Description
-This program will broadcast Wake On Lan magic packet into same segment network.  
-The trigger of transmit is specific MQTT message.  
+This program will broadcast Wake On Lan magic packet into same segment network.
+The trigger of transmit is specific MQTT message.
 
-- **main.py**  
-This program is receiver, so it can receive specific MQTT message and broadcast WOL magic packet into selected network.  
-- **GUI directory**  
+- **main.py**
+This program is receiver, so it can receive specific MQTT message and broadcast WOL magic packet into selected network.
+- **GUI directory**
 This program is transmitter, so it can transmit specific MQTT message and receive various MQTT messages.
+- **Service setup**
+If you want you can use the wakeonlanmqtt.service on your linux server to start the project on start. It will also restart the program when it failes
+You need to change the User and WorkingDirectory to the correct user and folder, same with python if it's not in the same folder.
 
 ## Environment
 ```
@@ -21,11 +24,11 @@ Up main program in network segment.
 ```
 py main.py
 ```
-Transmit MQTT data to connected broker.  
-```payload``` expected **json** format and MAC address separator expected **```:```** or **```-```** or **blank**.  
-Please use GUI application for easy use.  
+Transmit MQTT data to connected broker.
+```payload``` expected **json** format and MAC address separator expected **```:```** or **```-```** or **blank**.
+Please use GUI application for easy use.
 ```
-topic  : takkaO/wol 
+topic  : takkaO/wol
 payload: {"mac": "target_mac_address"}
 ```
 
@@ -41,12 +44,12 @@ payload: {"mac": "77 88 99 AA BB CC"}
 ```
 
 ### Nickname Resolution Service
-You can send nickname instead of MAC address if you were register pair of nicknames and MAC addresses beforehand.  
+You can send nickname instead of MAC address if you were register pair of nicknames and MAC addresses beforehand.
 Open ```nrs.ini``` file in server side.
-If you want to add pair of nickname ```mypc``` and MAC address ```aa:aa:aa:aa:aa:aa``` , add pair as described below.  
+If you want to add pair of nickname ```mypc``` and MAC address ```aa:aa:aa:aa:aa:aa``` , add pair as described below.
 ```
-[NicknameResolutionService]  
-nick_name = xx:xx:xx:xx:xx:xx  
+[NicknameResolutionService]
+nick_name = xx:xx:xx:xx:xx:xx
 mypc = aa:aa:aa:aa:aa:aa
 ```
 
@@ -60,3 +63,7 @@ payload: {"mac": "mypc"}
 - [Can Python select what network adapter when opening a socket?](https://stackoverflow.com/questions/8437726/can-python-select-what-network-adapter-when-opening-a-socket)
 - [How to get Network Interface Card names in Python?](https://stackoverflow.com/questions/3837069/how-to-get-network-interface-card-names-in-python)
 - [psutil documentation](https://psutil.readthedocs.io/en/latest/)
+
+
+## Updates
+After a while I noticed the program started only returning "ng". The solution: restarting it. Hence I changed the line so that the program would restart, which seems to fix the problem.

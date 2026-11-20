@@ -1,12 +1,11 @@
 import paho.mqtt.client as mqtt
-import os 
+import os
 import re
 import time
 import configparser
 from enum import Enum, auto
 
 class CallbackType(Enum):
-	# とりあえずこれだけ対応
 	ON_CONNECT = auto()
 	ON_MESSAGE = auto()
 	ON_PUBLISH = auto()
@@ -21,22 +20,22 @@ class MyMqtt():
 		if not os.path.isfile(setting_fpath):
 			print("Setting file not found!")
 			print("Create new setting file\n")
-			print("Enter broker ip address: ", end="")
+			print("Enter broker ip address: ")
 			ip = input()
 			while not self.check_ip_address(ip):
-				print("Invalid ip address! Please retype\n: ", end="")
+				print("Invalid ip address! Please retype\n: ")
 				ip = input()
-			print("Enter broker port number: ", end="")
+			print("Enter broker port number: ")
 			port = input()
 			while not self.check_port_number(port):
-				print("Invalid port number! Please retype\n: ", end="")
+				print("Invalid port number! Please retype\n: ")
 				port = input()
-			print("Enter broker user name: ", end="")
+			print("Enter broker user name: ")
 			user = input()
-			print("Enter broker password: ", end="")
+			print("Enter broker password: ")
 			password = input()
 			config["Broker"] = {
-				"ip": ip, 
+				"ip": ip,
 				"port": port,
 				"user": user,
 				"pass": password
@@ -44,14 +43,14 @@ class MyMqtt():
 			with open(setting_fpath, 'w') as configfile:
 				config.write(configfile)
 			print("Save setting -> {0}".format(setting_fpath))
-		
+
 		self.ip, self.port, self.user, self.password = self.load_settings(setting_fpath)
 		if not self.check_ip_address(self.ip) or not self.check_port_number(self.port):
 			print("Invalid setting values!!")
 			print("ip  : {0}".format(self.ip))
 			print("port: {0}".format(self.port))
 			exit(1)
-		
+
 		print("Broker setting loaded!")
 		print("ip  : {0}".format(self.ip))
 		print("port: {0}".format(self.port))
@@ -59,18 +58,18 @@ class MyMqtt():
 		self.client = mqtt.Client()
 		if auto_connect:
 			self.connect_to_broker()
-	
+
 	def connect_to_broker(self):
 		self.client.username_pw_set(username=self.user, password=self.password)
 		self.client.connect(self.ip, port=self.port, keepalive=60)
 		self.client.loop_start()
-	
+
 	def publish(self, topic, payload=None, qos=0, retain=False):
 		self.client.publish(topic, payload, qos, retain)
-	
+
 	def subscribe(self, topic, qos=0):
 		self.client.subscribe(topic, qos)
-	
+
 	def unsubscribe(self, topic):
 		self.client.unsubscribe(topic)
 
@@ -85,12 +84,12 @@ class MyMqtt():
 			self.client.on_disconnect = function
 		else:
 			print("No support callback type")
-			
+
 	def load_settings(self, fpath):
 		if not os.path.isfile(fpath):
 			print("Error setting file not found: {0}".format(fpath))
 			exit(1)
-		
+
 		config = configparser.ConfigParser()
 		config.read(fpath)
 		ip = config["Broker"]["ip"]
@@ -98,7 +97,7 @@ class MyMqtt():
 		user = config["Broker"]["user"]
 		password = config["Broker"]["pass"]
 		return ip, port, user, password
-		
+
 	def check_port_number(self, num):
 		try:
 			num = int(num)

@@ -20,7 +20,7 @@ class WakeUpper:
 			config["NicknameResolutionService"] = {"nick_name" : "xx:xx:xx:xx:xx:xx"}
 			with open(self.mnlookup_file, 'w') as configfile:
 				config.write(configfile)
-	
+
 	def on_connect(self, client, userdata, flags, respons_code):
 		print('mqtt status {0}'.format(respons_code))
 		client.subscribe(self.topic)
@@ -41,9 +41,10 @@ class WakeUpper:
 				tx_data = {"wol_res": "ok"}
 				client.publish(self.topic_result, json.dumps(tx_data))
 				print("[", datetime.datetime.now(), "] Transmit WOL packet")
-		except:	
+		except:
 			tx_data = {"wol_res": "ng"}
 			client.publish(self.topic_result, json.dumps(tx_data))
+			raise
 
 
 def main():
@@ -56,6 +57,6 @@ def main():
 
 	while True:
 		time.sleep(5)
-	
+
 if __name__ == "__main__":
 	main()
